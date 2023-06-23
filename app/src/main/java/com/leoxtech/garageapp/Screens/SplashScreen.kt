@@ -50,8 +50,8 @@ class SplashScreen : AppCompatActivity() {
 
         mAuth = FirebaseAuth.getInstance()
 
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = Color.WHITE
+        window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+        window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
         fusedLocation = LocationServices.getFusedLocationProviderClient(this)
 
@@ -75,21 +75,21 @@ class SplashScreen : AppCompatActivity() {
             if (user != null) {
                 checkUserFromFirebase(user!!)
             } else {
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(this, SignIn::class.java))
                 finish()
             }
         }, 2000)
     }
 
     private fun checkUserFromFirebase(user: FirebaseUser) {
-        userRef = FirebaseDatabase.getInstance().getReference(Common.USER_REFERENCE)
+        userRef = FirebaseDatabase.getInstance().getReference(Common.GARAGE_USER_REFERENCE)
         userRef!!.child(user!!.uid).addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()){
                     val userModel = snapshot.getValue(UserModel::class.java)
                     goToHomeActivity(userModel)
                 }else{
-                    startActivity(Intent(this@SplashScreen, MainActivity::class.java))
+                    startActivity(Intent(this@SplashScreen, SignIn::class.java))
                     finish()
                 }
             }
