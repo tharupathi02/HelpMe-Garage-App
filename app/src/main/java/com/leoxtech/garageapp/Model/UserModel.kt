@@ -10,6 +10,8 @@ class UserModel {
     var phone: String? = null
     var idNumber: String? = null
     var photoURL: String? = null
+    var latitude: Double? = null
+    var longitude: Double? = null
 
     constructor(){}
 }

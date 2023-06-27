@@ -1,9 +1,20 @@
 package com.leoxtech.garageapp.Screens
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
+import android.location.Geocoder
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Looper
+import android.view.View
+import android.widget.Toast
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -12,6 +23,8 @@ import com.leoxtech.customerapp.Model.UserModel
 import com.leoxtech.garageapp.Common.Common
 import com.leoxtech.garageapp.R
 import com.leoxtech.garageapp.databinding.ActivitySignUpPage2Binding
+import java.io.IOException
+import java.util.Locale
 
 class SignUpPage2 : AppCompatActivity() {
 
@@ -20,6 +33,14 @@ class SignUpPage2 : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
     private lateinit var userRef: DatabaseReference
     private lateinit var dialog: AlertDialog
+
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var currentLocation: Location
+
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
 
     private var uID = "";
 
@@ -34,9 +55,37 @@ class SignUpPage2 : AppCompatActivity() {
 
         clickListeners()
 
+        initLocation()
+
         dialogBox()
     }
 
+    @SuppressLint("MissingPermission")
+    private fun initLocation() {
+        buildLocationRequest()
+        buildLocationCallback()
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationProviderClient!!.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
+    }
+
+    private fun buildLocationCallback() {
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(p0: LocationResult) {
+                super.onLocationResult(p0)
+                currentLocation = p0!!.lastLocation!!
+            }
+        }
+    }
+
+    private fun buildLocationRequest() {
+        locationRequest = LocationRequest()
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+        locationRequest.setInterval(5000)
+        locationRequest.setFastestInterval(3000)
+        locationRequest.setSmallestDisplacement(10f)
+    }
+
+    @SuppressLint("MissingPermission")
     private fun clickListeners() {
         binding.txtSkipForm.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
@@ -46,6 +95,42 @@ class SignUpPage2 : AppCompatActivity() {
             signUpForm()
         }
 
+        binding.btnSelectGarageLocation.setOnClickListener {
+            dialog.show()
+            fusedLocationProviderClient!!.lastLocation
+                .addOnFailureListener { e ->
+                    binding.txtGarageLocation.visibility = View.GONE
+                    Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+                }
+                .addOnCompleteListener { task ->
+                    latitude = task.result!!.latitude
+                    longitude = task.result!!.longitude
+
+                    val singleAddress = getAddressFromLatLng(task.result!!.latitude, task.result!!.longitude)
+
+                    binding.txtGarageLocation.text = singleAddress.toString()
+                    binding.txtGarageLocation.visibility = View.VISIBLE
+                    dialog.dismiss()
+                }
+        }
+
+    }
+
+    private fun getAddressFromLatLng(latitude: Double, longitude: Double): Any {
+        val geoCoder = Geocoder(this, Locale.getDefault())
+        val  result : String?=null
+        try {
+            val addressList = geoCoder.getFromLocation(latitude, longitude, 1)
+            if (addressList != null && addressList.size > 0) {
+                val address = addressList[0]
+                val sb = StringBuilder(address.getAddressLine(0))
+                return sb.toString()
+            } else {
+                return "Address not found"
+            }
+        } catch (e: IOException) {
+            return e.message!!
+        }
     }
 
     private fun signUpForm() {
@@ -87,6 +172,8 @@ class SignUpPage2 : AppCompatActivity() {
             userModel.phone = binding.txtContactNumber.editText?.text.toString()
             userModel.idNumber = binding.txtIDNumber.editText?.text.toString()
             userModel.photoURL = mAuth.currentUser?.photoUrl.toString()
+            userModel.latitude = latitude
+            userModel.longitude = longitude
 
             userRef.child(uID).setValue(userModel).addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {

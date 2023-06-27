@@ -12,4 +12,5 @@
     <string name="registration_number">Registration Number</string>
     <string name="skip_form_for_now">Skip form for now</string>
     <string name="sign_up">Sign Up</string>
+    <string name="select_garage_location">Select Garage Location</string>
 </resources>
