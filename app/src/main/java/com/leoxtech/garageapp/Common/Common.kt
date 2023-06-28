@@ -8,4 +8,8 @@ object Common {
     const val GARAGE_USER_REFERENCE = "Garage Users"
     var currentUser: UserModel? = null
 
+    // Create a array list of vehicle types
+    var vehicleTypes = arrayListOf<String>("Bike", "Three Wheel", "Car", "Truck", "Bus", "Van", "SUV")
+    var selectedVehicleTypes = arrayListOf<String>()
+
 }
