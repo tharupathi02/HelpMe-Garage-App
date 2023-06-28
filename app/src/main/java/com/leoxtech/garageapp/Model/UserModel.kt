@@ -12,6 +12,8 @@ class UserModel {
     var photoURL: String? = null
     var latitude: Double? = null
     var longitude: Double? = null
+    var workingVehicleTypes: String? = null
+    var workingHours: String? = null
 
     constructor(){}
 }

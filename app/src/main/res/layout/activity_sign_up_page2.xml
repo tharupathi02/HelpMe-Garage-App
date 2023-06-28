@@ -180,6 +180,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins"
+                    android:maxLength="10"
                     android:inputType="phone"/>
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -195,7 +196,63 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins"
+                    android:maxLength="12"
                     android:inputType="text|number"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:fontFamily="@font/poppins"
+                android:layout_marginTop="20dp"
+                android:text="Select Vehicle Type you work on :"
+                android:textColor="@color/black"
+                android:layout_weight="1"/>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupVehicleType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:singleLine="true"
+                    android:clickable="true"
+                    android:layout_marginTop="10dp"
+                    style="@style/Widget.Material3.Chip.Filter.Elevated"
+                    android:focusable="true">
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/txtSelectedVehicleTypes"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:fontFamily="@font/poppins"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center"
+                android:text="Select Vehicle Types you can repair or service"
+                android:textColor="@color/black"
+                android:layout_weight="1"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txtWorkingHours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/working_hours"
+                android:layout_marginTop="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:inputType="text"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 

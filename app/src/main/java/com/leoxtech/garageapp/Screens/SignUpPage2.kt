@@ -15,6 +15,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -114,6 +115,34 @@ class SignUpPage2 : AppCompatActivity() {
                 }
         }
 
+        // Add vehicle types to chip group programmatically from array list in Common.kt
+        for (i in Common.vehicleTypes.indices) {
+            val chip = layoutInflater.inflate(R.layout.layout_chip, null, false) as Chip
+            chip.text = Common.vehicleTypes[i]
+            var selectedType = ""
+            chip.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (isChecked) {
+                    Common.selectedVehicleTypes.add(buttonView.text.toString())
+                    for (i in Common.selectedVehicleTypes.indices) {
+                        selectedType = Common.selectedVehicleTypes.toString().replace("[", "").replace("]", "")
+                        binding.txtSelectedVehicleTypes.text = selectedType
+                    }
+
+                } else {
+                    Common.selectedVehicleTypes.remove(buttonView.text.toString())
+                    for (i in Common.selectedVehicleTypes.indices) {
+                        selectedType = Common.selectedVehicleTypes.toString().replace("[", "").replace("]", "")
+                        binding.txtSelectedVehicleTypes.text = selectedType
+                    }
+                    if (Common.selectedVehicleTypes.isEmpty()) {
+                        binding.txtSelectedVehicleTypes.text = "Select Vehicle Types you can repair or service"
+                    }
+                }
+            }
+
+            binding.chipGroupVehicleType.addView(chip)
+        }
+
     }
 
     private fun getAddressFromLatLng(latitude: Double, longitude: Double): Any {
@@ -141,6 +170,7 @@ class SignUpPage2 : AppCompatActivity() {
         val address = binding.txtAddress.editText?.text.toString()
         val contactNumber = binding.txtContactNumber.editText?.text.toString()
         val idNumber = binding.txtIDNumber.editText?.text.toString()
+        val workingHours = binding.txtWorkingHours.editText?.text.toString()
 
         if (firstName.isEmpty()) {
             binding.txtFirstName.error = "First name is required"
@@ -160,7 +190,14 @@ class SignUpPage2 : AppCompatActivity() {
         } else if (idNumber.isEmpty()) {
             binding.txtIDNumber.error = "ID number is required"
             return
-        } else {
+        } else if (workingHours.isEmpty()) {
+            binding.txtWorkingHours.error = "Working hours is required"
+            return
+        } else if (Common.selectedVehicleTypes.isEmpty()) {
+            Snackbar.make(binding.root, "Please select vehicle types you can repair or service", Snackbar.LENGTH_LONG).show()
+            return
+        }
+        else {
             dialog.show()
             val userModel = UserModel()
             userModel.uid = uID
@@ -174,6 +211,8 @@ class SignUpPage2 : AppCompatActivity() {
             userModel.photoURL = mAuth.currentUser?.photoUrl.toString()
             userModel.latitude = latitude
             userModel.longitude = longitude
+            userModel.workingHours = binding.txtWorkingHours.editText?.text.toString()
+            userModel.workingVehicleTypes = Common.selectedVehicleTypes.toString().replace("[", "").replace("]", "")
 
             userRef.child(uID).setValue(userModel).addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
