@@ -166,6 +166,7 @@ class SignUpPage2 : AppCompatActivity() {
         val firstName = binding.txtFirstName.editText?.text.toString()
         val lastName = binding.txtLastName.editText?.text.toString()
         val companyName = binding.txtCompanyName.editText?.text.toString()
+        val description = binding.txtDescription.editText?.text.toString()
         val registrationNumber = binding.txtRegistrationNumber.editText?.text.toString()
         val address = binding.txtAddress.editText?.text.toString()
         val contactNumber = binding.txtContactNumber.editText?.text.toString()
@@ -177,6 +178,9 @@ class SignUpPage2 : AppCompatActivity() {
             return
         } else if (lastName.isEmpty()) {
             binding.txtLastName.error = "Last name is required"
+            return
+        } else if (description.isEmpty()) {
+            binding.txtDescription.error = "Description is required"
             return
         } else if (companyName.isEmpty()) {
             binding.txtCompanyName.error = "Company name is required"
@@ -204,6 +208,7 @@ class SignUpPage2 : AppCompatActivity() {
             userModel.name = binding.txtFirstName.editText?.text.toString() + " " + binding.txtLastName.editText?.text.toString()
             userModel.email = binding.txtEmail.editText?.text.toString()
             userModel.companyName = binding.txtCompanyName.editText?.text.toString()
+            userModel.description = binding.txtDescription.editText?.text.toString()
             userModel.registrationNumber = binding.txtRegistrationNumber.editText?.text.toString()
             userModel.address = binding.txtAddress.editText?.text.toString()
             userModel.phone = binding.txtContactNumber.editText?.text.toString()
