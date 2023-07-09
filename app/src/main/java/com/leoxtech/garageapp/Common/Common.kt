@@ -6,6 +6,7 @@ object Common {
 
     const val USER_REFERENCE = "Users"
     const val GARAGE_USER_REFERENCE = "Garage Users"
+    const val REQUEST_REF = "Requests"
     var currentUser: UserModel? = null
 
     // Create a array list of vehicle types

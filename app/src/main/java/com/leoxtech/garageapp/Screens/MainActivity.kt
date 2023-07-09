@@ -6,7 +6,10 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
+import com.leoxtech.garageapp.Fragments.ChatListFragment
+import com.leoxtech.garageapp.Fragments.EmergencyFragment
 import com.leoxtech.garageapp.Fragments.HomeFragment
+import com.leoxtech.garageapp.Fragments.ProfileFragment
 import com.leoxtech.garageapp.R
 import com.leoxtech.garageapp.databinding.ActivityMainBinding
 
@@ -32,9 +35,9 @@ class MainActivity : AppCompatActivity() {
         binding.navBottomNavigation.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.navHome -> replaceFragment(HomeFragment())
-//                R.id.navProfile -> replaceFragment(ProfileFragment())
-//                R.id.navChat -> replaceFragment(ChatListFragment())
-//                R.id.navEmergency -> replaceFragment(EmergencyFragment())
+                R.id.navProfile -> replaceFragment(ProfileFragment())
+                R.id.navChat -> replaceFragment(ChatListFragment())
+                R.id.navEmergency -> replaceFragment(EmergencyFragment())
             }
             true
         }

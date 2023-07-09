@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -24,8 +25,14 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.leoxtech.garageapp.Adapter.UrgentRequestAdapter
 import com.leoxtech.garageapp.Common.Common
+import com.leoxtech.garageapp.Model.RequestHelpModel
 import com.leoxtech.garageapp.R
 import com.leoxtech.garageapp.databinding.FragmentHomeBinding
 import java.io.IOException
@@ -44,7 +51,7 @@ class HomeFragment : Fragment() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var currentLocation: Location
 
-    //private lateinit var popularArrayList: ArrayList<GarageModel>
+    private lateinit var requestHelpArrayList: ArrayList<RequestHelpModel>
 
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
@@ -70,6 +77,53 @@ class HomeFragment : Fragment() {
 
         clickListeners()
 
+        requestHelpArrayList = arrayListOf<RequestHelpModel>()
+        getUrgentRequests()
+
+    }
+
+    private fun getUrgentRequests() {
+        dialog.show()
+        dbRef = FirebaseDatabase.getInstance().getReference(Common.REQUEST_REF)
+        dbRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    requestHelpArrayList.clear()
+                    for (popularSnapshot in snapshot.children) {
+                        if (popularSnapshot.child("status").value.toString() == "Urgent" && popularSnapshot.child("garageUid").value.toString() == mAuth.currentUser!!.uid) {
+                            val urgent = popularSnapshot.getValue(RequestHelpModel::class.java)
+                            requestHelpArrayList.add(urgent!!)
+                        }
+                    }
+
+                    binding.recyclerviewUrgentRequests.adapter = UrgentRequestAdapter(context!!, requestHelpArrayList!!)
+                    binding.recyclerviewUrgentRequests.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                    dialog.dismiss()
+
+                    if (requestHelpArrayList.size > 0) {
+                        binding.txtNoUrgentRequests.visibility = View.GONE
+                        binding.txtUrgentRequestCount.text = "You have (${requestHelpArrayList.size}) Urgent Requests Available in your area Now."
+                        if (requestHelpArrayList.size > 1) {
+                            binding.txtUrgentRequestSwipeText.visibility = View.VISIBLE
+                        } else {
+                            binding.txtUrgentRequestSwipeText.visibility = View.GONE
+                        }
+                        dialog.dismiss()
+                    } else {
+                        binding.txtNoUrgentRequests.visibility = View.VISIBLE
+                        dialog.dismiss()
+                    }
+                } else {
+                    binding.txtNoUrgentRequests.visibility = View.VISIBLE
+                    dialog.dismiss()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Snackbar.make(requireView(), error.message, Snackbar.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+        })
     }
 
     private fun clickListeners() {
