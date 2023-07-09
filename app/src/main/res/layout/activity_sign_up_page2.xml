@@ -137,6 +137,29 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txtDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/garage_description"
+                app:hintAnimationEnabled="true"
+                app:expandedHintEnabled="true"
+                app:counterEnabled="true"
+                app:counterMaxLength="50"
+                android:layout_marginTop="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:inputType="textMultiLine"
+                    android:maxLines="4"
+                    android:maxLength="50"
+                    android:lines="4"
+                    android:gravity="start"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/txtRegistrationNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -174,6 +197,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/contact_number"
+                app:counterEnabled="true"
+                app:counterMaxLength="10"
                 android:layout_marginTop="10dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -190,6 +215,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/identity_card_number"
+                app:counterEnabled="true"
+                app:counterMaxLength="12"
                 android:layout_marginTop="10dp">
 
                 <com.google.android.material.textfield.TextInputEditText

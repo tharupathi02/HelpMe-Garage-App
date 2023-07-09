@@ -4,6 +4,7 @@ class UserModel {
     var uid: String? = null
     var name: String? = null
     var companyName: String? = null
+    var description: String? = null
     var registrationNumber: String? = null
     var email: String? = null
     var address: String? = null
