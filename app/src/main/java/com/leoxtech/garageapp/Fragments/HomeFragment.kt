@@ -87,8 +87,8 @@ class HomeFragment : Fragment() {
         dbRef = FirebaseDatabase.getInstance().getReference(Common.REQUEST_REF)
         dbRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                requestHelpArrayList.clear()
                 if (snapshot.exists()) {
-                    requestHelpArrayList.clear()
                     for (popularSnapshot in snapshot.children) {
                         if (popularSnapshot.child("status").value.toString() == "Urgent" && popularSnapshot.child("garageUid").value.toString() == mAuth.currentUser!!.uid) {
                             val urgent = popularSnapshot.getValue(RequestHelpModel::class.java)
@@ -111,10 +111,12 @@ class HomeFragment : Fragment() {
                         dialog.dismiss()
                     } else {
                         binding.txtNoUrgentRequests.visibility = View.VISIBLE
+                        binding.txtUrgentRequestCount.visibility = View.GONE
                         dialog.dismiss()
                     }
                 } else {
                     binding.txtNoUrgentRequests.visibility = View.VISIBLE
+                    binding.txtUrgentRequestCount.visibility = View.GONE
                     dialog.dismiss()
                 }
             }
