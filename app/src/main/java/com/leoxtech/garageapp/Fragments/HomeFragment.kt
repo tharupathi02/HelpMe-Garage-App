@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -96,13 +97,16 @@ class HomeFragment : Fragment() {
                         }
                     }
 
+                    //Snackbar.make(requireView(), "You have (${requestHelpArrayList.size}) Urgent Requests Available in your area Now.", Snackbar.LENGTH_SHORT).show()
+
                     binding.recyclerviewUrgentRequests.adapter = UrgentRequestAdapter(context!!, requestHelpArrayList!!)
                     binding.recyclerviewUrgentRequests.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-                    dialog.dismiss()
 
                     if (requestHelpArrayList.size > 0) {
+
                         binding.txtNoUrgentRequests.visibility = View.GONE
                         binding.txtUrgentRequestCount.text = "You have (${requestHelpArrayList.size}) Urgent Requests Available in your area Now."
+
                         if (requestHelpArrayList.size > 1) {
                             binding.txtUrgentRequestSwipeText.visibility = View.VISIBLE
                         } else {
@@ -111,10 +115,13 @@ class HomeFragment : Fragment() {
                         dialog.dismiss()
                     } else {
                         binding.txtNoUrgentRequests.visibility = View.VISIBLE
+                        binding.txtUrgentRequestCount.visibility = View.GONE
                         dialog.dismiss()
                     }
+
                 } else {
                     binding.txtNoUrgentRequests.visibility = View.VISIBLE
+                    binding.txtUrgentRequestCount.visibility = View.GONE
                     dialog.dismiss()
                 }
             }

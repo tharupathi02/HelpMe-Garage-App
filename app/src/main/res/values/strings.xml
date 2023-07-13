@@ -25,4 +25,8 @@
     <string name="location">Location</string>
     <string name="accept">Accept</string>
     <string name="reject">Reject</string>
+    <string name="request_title">Request Title</string>
+    <string name="request_description">Request Description</string>
+    <string name="customer_name">Customer Name</string>
+    <string name="customer_mobile">Customer Mobile</string>
 </resources>
