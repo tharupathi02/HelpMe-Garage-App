@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -87,8 +88,8 @@ class HomeFragment : Fragment() {
         dbRef = FirebaseDatabase.getInstance().getReference(Common.REQUEST_REF)
         dbRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                requestHelpArrayList.clear()
                 if (snapshot.exists()) {
+                    requestHelpArrayList.clear()
                     for (popularSnapshot in snapshot.children) {
                         if (popularSnapshot.child("status").value.toString() == "Urgent" && popularSnapshot.child("garageUid").value.toString() == mAuth.currentUser!!.uid) {
                             val urgent = popularSnapshot.getValue(RequestHelpModel::class.java)
@@ -96,13 +97,16 @@ class HomeFragment : Fragment() {
                         }
                     }
 
+                    //Snackbar.make(requireView(), "You have (${requestHelpArrayList.size}) Urgent Requests Available in your area Now.", Snackbar.LENGTH_SHORT).show()
+
                     binding.recyclerviewUrgentRequests.adapter = UrgentRequestAdapter(context!!, requestHelpArrayList!!)
                     binding.recyclerviewUrgentRequests.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-                    dialog.dismiss()
 
                     if (requestHelpArrayList.size > 0) {
+
                         binding.txtNoUrgentRequests.visibility = View.GONE
                         binding.txtUrgentRequestCount.text = "You have (${requestHelpArrayList.size}) Urgent Requests Available in your area Now."
+
                         if (requestHelpArrayList.size > 1) {
                             binding.txtUrgentRequestSwipeText.visibility = View.VISIBLE
                         } else {
@@ -114,6 +118,7 @@ class HomeFragment : Fragment() {
                         binding.txtUrgentRequestCount.visibility = View.GONE
                         dialog.dismiss()
                     }
+
                 } else {
                     binding.txtNoUrgentRequests.visibility = View.VISIBLE
                     binding.txtUrgentRequestCount.visibility = View.GONE
