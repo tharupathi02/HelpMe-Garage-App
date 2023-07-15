@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.leoxtech.garageapp.Common.Common
 import com.leoxtech.garageapp.Model.RequestHelpModel
 import com.leoxtech.garageapp.R
+import com.leoxtech.garageapp.Screens.RequestComplete
 import com.leoxtech.garageapp.Screens.UrgentRequestDetails
 
 class UrgentRequestAdapter (internal var context: Context, private var urgentRequestList: List<RequestHelpModel>) : RecyclerView.Adapter<UrgentRequestAdapter.MyViewHolder>() {
@@ -42,6 +43,11 @@ class UrgentRequestAdapter (internal var context: Context, private var urgentReq
             holder.btnAccept!!.visibility = View.GONE
             holder.btnReject!!.visibility = View.GONE
             holder.btnLocation!!.visibility = View.GONE
+        } else if (urgentRequestList.get(position).status.equals("Completed")) {
+            holder.btnAccept!!.visibility = View.GONE
+            holder.btnReject!!.visibility = View.GONE
+            holder.btnLocation!!.visibility = View.GONE
+            holder.btnComplete!!.visibility = View.GONE
         } else {
             holder.btnAccept!!.visibility = View.VISIBLE
             holder.btnReject!!.visibility = View.VISIBLE
@@ -76,6 +82,10 @@ class UrgentRequestAdapter (internal var context: Context, private var urgentReq
                         Toast.makeText(context, "Request Rejected Failed", Toast.LENGTH_SHORT).show()
                     }
                 }
+        }
+
+        holder.btnComplete!!.setOnClickListener {
+            startActivity(context, Intent(context, RequestComplete::class.java).putExtra("key", urgentRequestList.get(position).key), null)
         }
     }
 

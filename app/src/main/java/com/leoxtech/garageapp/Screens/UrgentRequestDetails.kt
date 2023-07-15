@@ -152,6 +152,9 @@ class UrgentRequestDetails : AppCompatActivity() {
                             } else if (urgentSnapshot.child("status").value.toString() == "Rejected") {
                                 btnAccept.visibility = View.GONE
                                 btnReject.visibility = View.GONE
+                            } else if (urgentSnapshot.child("status").value.toString() == "Completed") {
+                                btnAccept.visibility = View.GONE
+                                btnReject.visibility = View.GONE
                             } else {
                                 btnAccept.visibility = View.VISIBLE
                                 btnReject.visibility = View.VISIBLE
@@ -217,7 +220,6 @@ class UrgentRequestDetails : AppCompatActivity() {
         vectorDrawable.draw(canvas)
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
-
 
     private fun dialogBox() {
         AlertDialog.Builder(this).apply {
