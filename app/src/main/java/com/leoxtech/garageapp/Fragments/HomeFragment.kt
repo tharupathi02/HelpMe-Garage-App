@@ -90,14 +90,14 @@ class HomeFragment : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     requestHelpArrayList.clear()
-                    for (popularSnapshot in snapshot.children) {
-                        if (popularSnapshot.child("status").value.toString() == "Urgent" && popularSnapshot.child("garageUid").value.toString() == mAuth.currentUser!!.uid) {
-                            val urgent = popularSnapshot.getValue(RequestHelpModel::class.java)
+                    for (urgentSnapshot in snapshot.children) {
+                        if (urgentSnapshot.child("status").value.toString() == "Urgent" && urgentSnapshot.child("garageUid").value.toString() == mAuth.currentUser!!.uid) {
+                            val urgent = urgentSnapshot.getValue(RequestHelpModel::class.java)
                             requestHelpArrayList.add(urgent!!)
                         }
                     }
 
-                    //Snackbar.make(requireView(), "You have (${requestHelpArrayList.size}) Urgent Requests Available in your area Now.", Snackbar.LENGTH_SHORT).show()
+                    requestHelpArrayList.reverse()
 
                     binding.recyclerviewUrgentRequests.adapter = UrgentRequestAdapter(context!!, requestHelpArrayList!!)
                     binding.recyclerviewUrgentRequests.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)

@@ -89,7 +89,7 @@ class UrgentRequestDetails : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     for (urgentSnapshot in snapshot.children) {
-                        if (urgentSnapshot.key == key && urgentSnapshot.child("status").value.toString() == "Urgent") {
+                        if (urgentSnapshot.key == key) {
                             val view: View = layoutInflater.inflate(R.layout.bottom_sheet_urgent_request_details, null)
                             bottomSheetDialog = BottomSheetDialog(this@UrgentRequestDetails)
                             bottomSheetDialog.setContentView(view)
@@ -144,6 +144,17 @@ class UrgentRequestDetails : AppCompatActivity() {
                                     }
                                 }
                                 dialog.dismiss()
+                            }
+
+                            if (urgentSnapshot.child("status").value.toString() == "Accepted") {
+                                btnAccept.visibility = View.GONE
+                                btnReject.visibility = View.GONE
+                            } else if (urgentSnapshot.child("status").value.toString() == "Rejected") {
+                                btnAccept.visibility = View.GONE
+                                btnReject.visibility = View.GONE
+                            } else {
+                                btnAccept.visibility = View.VISIBLE
+                                btnReject.visibility = View.VISIBLE
                             }
 
                             btnAccept.setOnClickListener {

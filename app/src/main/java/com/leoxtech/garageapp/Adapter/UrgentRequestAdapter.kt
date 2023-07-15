@@ -33,6 +33,21 @@ class UrgentRequestAdapter (internal var context: Context, private var urgentReq
         holder.txtUrgentRequest!!.text = urgentRequestList.get(position).status
         Glide.with(context).load(urgentRequestList.get(position).imageList!!.get(0)).into(holder.imgUrgentRequest!!)
 
+        if (urgentRequestList.get(position).status.equals("Accepted")) {
+            holder.btnAccept!!.visibility = View.GONE
+            holder.btnReject!!.visibility = View.GONE
+            holder.btnLocation!!.visibility = View.GONE
+            holder.btnComplete!!.visibility = View.VISIBLE
+        } else if (urgentRequestList.get(position).status.equals("Rejected")) {
+            holder.btnAccept!!.visibility = View.GONE
+            holder.btnReject!!.visibility = View.GONE
+            holder.btnLocation!!.visibility = View.GONE
+        } else {
+            holder.btnAccept!!.visibility = View.VISIBLE
+            holder.btnReject!!.visibility = View.VISIBLE
+            holder.btnLocation!!.visibility = View.VISIBLE
+        }
+
         holder.btnLocation!!.setOnClickListener {
             startActivity(context, Intent(context, UrgentRequestDetails::class.java).putExtra("key", urgentRequestList.get(position).key), null)
         }
@@ -77,6 +92,7 @@ class UrgentRequestAdapter (internal var context: Context, private var urgentReq
         var btnLocation: Button? = null
         var btnAccept: Button? = null
         var btnReject: Button? = null
+        var btnComplete: Button? = null
         var cardUrgentRequest: MaterialCardView? = null
 
         init {
@@ -87,6 +103,7 @@ class UrgentRequestAdapter (internal var context: Context, private var urgentReq
             btnLocation = itemView.findViewById(R.id.btnLocation) as Button
             btnAccept = itemView.findViewById(R.id.btnAccept) as Button
             btnReject = itemView.findViewById(R.id.btnReject) as Button
+            btnComplete = itemView.findViewById(R.id.btnComplete) as Button
             cardUrgentRequest = itemView.findViewById(R.id.cardUrgentRequest) as MaterialCardView
 
         }
