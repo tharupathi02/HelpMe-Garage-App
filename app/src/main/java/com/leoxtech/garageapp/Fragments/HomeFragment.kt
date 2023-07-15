@@ -99,10 +99,10 @@ class HomeFragment : Fragment() {
 
                     requestHelpArrayList.reverse()
 
-                    binding.recyclerviewUrgentRequests.adapter = UrgentRequestAdapter(context!!, requestHelpArrayList!!)
-                    binding.recyclerviewUrgentRequests.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-
                     if (requestHelpArrayList.size > 0) {
+
+                        binding.recyclerviewUrgentRequests.adapter = UrgentRequestAdapter(context!!, requestHelpArrayList!!)
+                        binding.recyclerviewUrgentRequests.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
                         binding.txtNoUrgentRequests.visibility = View.GONE
                         binding.txtUrgentRequestCount.text = "You have (${requestHelpArrayList.size}) Urgent Requests Available in your area Now."

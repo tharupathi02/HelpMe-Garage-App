@@ -72,4 +72,9 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="garage_name">Garage Name</string>
+    <string name="vehicle_model">Vehicle Model</string>
+    <string name="bill_amount">Bill Amount</string>
+    <string name="vehicle_number">Vehicle Number</string>
+    <string name="inspection_details_what_s_you_did">Inspection Details (What\'s you did?)</string>
 </resources>
