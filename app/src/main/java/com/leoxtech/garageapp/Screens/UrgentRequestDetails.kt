@@ -12,7 +12,9 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -31,6 +33,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.leoxtech.garageapp.Adapter.ImageAdapter
 import com.leoxtech.garageapp.Adapter.UrgentRequestAdapter
 import com.leoxtech.garageapp.Common.Common
 import com.leoxtech.garageapp.Model.RequestHelpModel
@@ -101,6 +104,7 @@ class UrgentRequestDetails : AppCompatActivity() {
                             val txtCustomerVehicle = view.findViewById<TextView>(R.id.txtCustomerVehicle)
                             val btnAccept = view.findViewById<Button>(R.id.btnAccept)
                             val btnReject = view.findViewById<Button>(R.id.btnReject)
+                            val recyclerUrgentRequestImages = view.findViewById<RecyclerView>(R.id.recyclerUrgentRequestImages)
 
                             txtRequestTitle.text = urgentSnapshot.child("customerIssueTitle").value.toString()
                             txtDateTime.text = Common.convertTimeStampToDate(urgentSnapshot.child("timeStamp").value.toString().toLong())
@@ -108,6 +112,14 @@ class UrgentRequestDetails : AppCompatActivity() {
                             txtCustomerName.text = urgentSnapshot.child("customerName").value.toString()
                             txtCustomerPhone.text = urgentSnapshot.child("customerPhone").value.toString()
                             txtCustomerVehicle.text = urgentSnapshot.child("customerVehicle").value.toString()
+
+                            val urgentRequestImages = ArrayList<String>()
+                            for (imageSnapshot in urgentSnapshot.child("imageList").children) {
+                                urgentRequestImages.add(imageSnapshot.value.toString())
+                            }
+                            recyclerUrgentRequestImages.adapter = ImageAdapter(this@UrgentRequestDetails, urgentRequestImages)
+                            recyclerUrgentRequestImages.layoutManager = LinearLayoutManager(this@UrgentRequestDetails, LinearLayoutManager.HORIZONTAL, false)
+                            recyclerUrgentRequestImages.setHasFixedSize(true)
 
                             val latLngCustomer = LatLng(urgentSnapshot.child("latitude").value.toString().toDouble(), urgentSnapshot.child("longitude").value.toString().toDouble())
 
@@ -165,12 +177,14 @@ class UrgentRequestDetails : AppCompatActivity() {
                                 FirebaseDatabase.getInstance().getReference(Common.REQUEST_REF).child(key!!).child("status").setValue("Accepted")
                                     .addOnCompleteListener(this@UrgentRequestDetails) { task ->
                                         if (task.isSuccessful) {
-                                            Snackbar.make(binding.root, "Request Accepted", Snackbar.LENGTH_LONG).show()
+                                            Toast.makeText(this@UrgentRequestDetails, "Request Accepted", Toast.LENGTH_LONG).show()
+                                            btnAccept.visibility = View.GONE
+                                            btnReject.visibility = View.GONE
                                             bottomSheetDialog.dismiss()
-                                            finish()
                                             dialog.dismiss()
                                         } else {
-                                            Snackbar.make(binding.root, task.exception!!.message.toString(), Snackbar.LENGTH_LONG).show()
+                                            Toast.makeText(this@UrgentRequestDetails, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+                                            bottomSheetDialog.dismiss()
                                             dialog.dismiss()
                                         }
                                     }
@@ -184,10 +198,10 @@ class UrgentRequestDetails : AppCompatActivity() {
                                         if (task.isSuccessful) {
                                             Snackbar.make(binding.root, "Request Rejected", Snackbar.LENGTH_LONG).show()
                                             bottomSheetDialog.dismiss()
-                                            finish()
                                             dialog.dismiss()
                                         } else {
                                             Snackbar.make(binding.root, task.exception!!.message.toString(), Snackbar.LENGTH_LONG).show()
+                                            bottomSheetDialog.dismiss()
                                             dialog.dismiss()
                                         }
                                     }

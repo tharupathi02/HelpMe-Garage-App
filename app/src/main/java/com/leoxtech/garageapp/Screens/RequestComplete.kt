@@ -62,6 +62,11 @@ class RequestComplete : AppCompatActivity() {
     }
 
     private fun clickListener() {
+
+        binding.cardBack.setOnClickListener {
+            finish()
+        }
+
         binding.btnAttachBill.setOnClickListener {
             ImagePicker.with(this).crop().compress(1024).maxResultSize(1080, 1080).start()
         }

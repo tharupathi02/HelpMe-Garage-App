@@ -77,4 +77,6 @@
     <string name="bill_amount">Bill Amount</string>
     <string name="vehicle_number">Vehicle Number</string>
     <string name="inspection_details_what_s_you_did">Inspection Details (What\'s you did?)</string>
+    <string name="booking_requests">Booking Requests</string>
+    <string name="my_work_list">My Work List</string>
 </resources>
