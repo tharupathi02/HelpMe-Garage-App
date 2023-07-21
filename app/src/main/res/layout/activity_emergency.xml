@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Fragments.EmergencyFragment">
+    tools:context=".Screens.EmergencyActivity">
 
     <RelativeLayout
         android:id="@+id/layoutHeader"
@@ -17,16 +17,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardBack"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="8dp"
+                android:backgroundTint="@color/white"
+                android:layout_margin="20dp"
+                android:layout_gravity="center"
+                style="@style/Widget.Material3.CardView.Filled">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/back"
+                    android:layout_gravity="center"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Emergency"
-                android:textColor="@color/white"
-                android:textSize="22sp"
-                android:fontFamily="@font/poppins_semibold"
                 android:layout_centerInParent="true"
-                android:layout_margin="20dp"
-                android:textAlignment="center"/>
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Request List"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="22sp" />
 
         </RelativeLayout>
 
@@ -48,7 +66,7 @@
         android:textSize="15sp"
         android:fontFamily="@font/poppins"
         android:layout_centerInParent="true"
-        android:visibility="gone"/>
+        android:visibility="invisible"/>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabNewRequest"
@@ -63,6 +81,5 @@
         android:textColor="@color/white"
         android:backgroundTint="@color/main_color"
         android:visibility="gone"/>
-
 
 </RelativeLayout>

@@ -1,18 +1,15 @@
-package com.leoxtech.garageapp.Fragments
+package com.leoxtech.garageapp.Screens
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.location.Geocoder
 import android.location.Location
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -35,13 +32,13 @@ import com.leoxtech.garageapp.Adapter.UrgentRequestAdapter
 import com.leoxtech.garageapp.Common.Common
 import com.leoxtech.garageapp.Model.RequestHelpModel
 import com.leoxtech.garageapp.R
-import com.leoxtech.garageapp.databinding.FragmentHomeBinding
+import com.leoxtech.garageapp.databinding.ActivityHomeBinding
 import java.io.IOException
 import java.util.Locale
 
-class HomeFragment : Fragment() {
+class HomeActivity : AppCompatActivity() {
 
-    private lateinit var binding: FragmentHomeBinding
+    private lateinit var binding: ActivityHomeBinding
 
     private lateinit var dbRef: DatabaseReference
     private lateinit var mAuth: FirebaseAuth
@@ -57,16 +54,10 @@ class HomeFragment : Fragment() {
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityHomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         mAuth = FirebaseAuth.getInstance()
 
@@ -88,8 +79,8 @@ class HomeFragment : Fragment() {
         dbRef = FirebaseDatabase.getInstance().getReference(Common.REQUEST_REF)
         dbRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                requestHelpArrayList.clear()
                 if (snapshot.exists()) {
-                    requestHelpArrayList.clear()
                     for (urgentSnapshot in snapshot.children) {
                         if (urgentSnapshot.child("status").value.toString() == "Urgent" && urgentSnapshot.child("garageUid").value.toString() == mAuth.currentUser!!.uid) {
                             val urgent = urgentSnapshot.getValue(RequestHelpModel::class.java)
@@ -99,12 +90,13 @@ class HomeFragment : Fragment() {
 
                     requestHelpArrayList.reverse()
 
-                    if (requestHelpArrayList.size > 0) {
+                    if (requestHelpArrayList.size >= 0) {
 
-                        binding.recyclerviewUrgentRequests.adapter = UrgentRequestAdapter(context!!, requestHelpArrayList!!)
-                        binding.recyclerviewUrgentRequests.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                        binding.recyclerviewUrgentRequests.adapter = UrgentRequestAdapter(this@HomeActivity, requestHelpArrayList!!)
+                        binding.recyclerviewUrgentRequests.layoutManager = LinearLayoutManager(this@HomeActivity, LinearLayoutManager.HORIZONTAL, false)
 
                         binding.txtNoUrgentRequests.visibility = View.GONE
+                        binding.txtUrgentRequestCount.visibility = View.VISIBLE
                         binding.txtUrgentRequestCount.text = "You have (${requestHelpArrayList.size}) Urgent Requests Available in your area Now."
 
                         if (requestHelpArrayList.size > 1) {
@@ -116,6 +108,7 @@ class HomeFragment : Fragment() {
                     } else {
                         binding.txtNoUrgentRequests.visibility = View.VISIBLE
                         binding.txtUrgentRequestCount.visibility = View.GONE
+                        binding.recyclerviewUrgentRequests.visibility = View.GONE
                         dialog.dismiss()
                     }
 
@@ -127,7 +120,7 @@ class HomeFragment : Fragment() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Snackbar.make(requireView(), error.message, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, error.message, Snackbar.LENGTH_SHORT).show()
                 dialog.dismiss()
             }
         })
@@ -135,61 +128,7 @@ class HomeFragment : Fragment() {
 
     private fun clickListeners() {
         binding.cardLocation.setOnClickListener {
-            showBottomSheetDialog()
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun showBottomSheetDialog() {
-        dialog.show()
-        val locationResult = LocationServices.getFusedLocationProviderClient(requireContext()).lastLocation
-        val view: View = layoutInflater.inflate(R.layout.dashboard_current_location_view, null)
-        val bottomSheetDialog = BottomSheetDialog(requireContext())
-        bottomSheetDialog.setContentView(view)
-        bottomSheetDialog.show()
-
-        if (bottomSheetDialog.isShowing) {
-            val mapFragment = childFragmentManager.findFragmentById(R.id.mapView) as SupportMapFragment
-            mapFragment.getMapAsync { googleMap ->
-                locationResult.addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val lastKnownLocation = task.result
-                        if (lastKnownLocation != null) {
-                            val latLng = LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude)
-                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
-                            googleMap.isMyLocationEnabled = true
-                            googleMap.uiSettings.isMyLocationButtonEnabled = true
-                            googleMap.uiSettings.isZoomControlsEnabled = true
-                            googleMap.uiSettings.isZoomGesturesEnabled = true
-                            googleMap.uiSettings.isScrollGesturesEnabled = true
-                            googleMap.uiSettings.isTiltGesturesEnabled = true
-                            googleMap.uiSettings.isRotateGesturesEnabled = true
-                            googleMap.uiSettings.isCompassEnabled = true
-                            googleMap.uiSettings.isMapToolbarEnabled = true
-
-                            val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                            try {
-                                val addresses = geocoder.getFromLocation(lastKnownLocation.latitude, lastKnownLocation.longitude, 1)
-                                val address = addresses!![0].getAddressLine(0)
-                                val city = addresses[0].locality
-                                val state = addresses[0].adminArea
-                                val country = addresses[0].countryName
-                                val postalCode = addresses[0].postalCode
-                                val knownName = addresses[0].featureName
-                                val txtCurrentLocationText = view.findViewById<TextView>(R.id.txtCurrentLocationText)
-                                txtCurrentLocationText.text = "Address: $address\nCity: $city\nState: $state\nCountry: $country\nPostal Code: $postalCode\nKnown Name: $knownName"
-                                dialog.dismiss()
-                            } catch (e: IOException) {
-                                Snackbar.make(requireView(), "Error: ${e.message}", Snackbar.LENGTH_LONG).show()
-                                dialog.dismiss()
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            bottomSheetDialog.dismiss()
-            dialog.dismiss()
+            startActivity(Intent(this, CurrentLocationView::class.java))
         }
     }
 
@@ -217,7 +156,7 @@ class HomeFragment : Fragment() {
                 latitude = task.result!!.latitude
                 longitude = task.result!!.longitude
 
-                val geoCoder = Geocoder(requireContext(), Locale.getDefault())
+                val geoCoder = Geocoder(this, Locale.getDefault())
                 val  result : String?=null
                 try {
                     val addressList = geoCoder.getFromLocation(latitude, longitude, 1)
@@ -240,7 +179,7 @@ class HomeFragment : Fragment() {
         dialog.show()
         buildLocationRequest()
         buildLocationCallback()
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         fusedLocationProviderClient!!.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper()!!)
         dialog.dismiss()
     }
@@ -263,7 +202,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun dialogBox() {
-        AlertDialog.Builder(context).apply {
+        AlertDialog.Builder(this).apply {
             setCancelable(false)
             setView(R.layout.progress_dialog)
         }.create().also {
@@ -271,4 +210,5 @@ class HomeFragment : Fragment() {
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         }
     }
+
 }

@@ -102,7 +102,7 @@ class RequestComplete : AppCompatActivity() {
                                 .addOnCompleteListener(this@RequestComplete) { task ->
                                     if (task.isSuccessful) {
                                         Snackbar.make(binding.root, "Bill Added Successfully", Snackbar.LENGTH_LONG).show()
-                                        startActivity(Intent(this, MainActivity::class.java))
+                                        startActivity(Intent(this, HomeActivity::class.java))
                                         finish()
                                         dialog.dismiss()
                                     } else {
