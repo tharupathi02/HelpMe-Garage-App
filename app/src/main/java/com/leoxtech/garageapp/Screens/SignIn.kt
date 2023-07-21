@@ -131,7 +131,7 @@ class SignIn : AppCompatActivity() {
     private fun goToHomeActivity(userModel: UserModel?) {
         Common.currentUser = userModel!!
         dialog.dismiss()
-        startActivity(Intent(this, MainActivity::class.java))
+        startActivity(Intent(this, HomeActivity::class.java))
         finish()
     }
 

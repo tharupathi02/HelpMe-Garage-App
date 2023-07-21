@@ -19,6 +19,15 @@
         android:theme="@style/Theme.GarageApp"
         tools:targetApi="31">
         <activity
+            android:name=".Screens.CurrentLocationView"
+            android:exported="false" />
+        <activity
+            android:name=".Screens.EmergencyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Screens.HomeActivity"
+            android:exported="false" />
+        <activity
             android:name=".Screens.RequestComplete"
             android:exported="false"
             android:label="@string/title_activity_request_complete"
