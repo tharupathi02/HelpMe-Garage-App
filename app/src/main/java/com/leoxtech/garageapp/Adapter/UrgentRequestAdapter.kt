@@ -12,6 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
@@ -43,11 +44,13 @@ class UrgentRequestAdapter (internal var context: Context, private var urgentReq
             holder.btnAccept!!.visibility = View.GONE
             holder.btnReject!!.visibility = View.GONE
             holder.btnLocation!!.visibility = View.GONE
+            holder.animationView!!.visibility = View.GONE
         } else if (urgentRequestList.get(position).status.equals("Completed")) {
             holder.btnAccept!!.visibility = View.GONE
             holder.btnReject!!.visibility = View.GONE
             holder.btnLocation!!.visibility = View.GONE
             holder.btnComplete!!.visibility = View.GONE
+            holder.animationView!!.visibility = View.GONE
         } else {
             holder.btnAccept!!.visibility = View.VISIBLE
             holder.btnReject!!.visibility = View.VISIBLE
@@ -104,6 +107,7 @@ class UrgentRequestAdapter (internal var context: Context, private var urgentReq
         var btnReject: Button? = null
         var btnComplete: Button? = null
         var cardUrgentRequest: MaterialCardView? = null
+        var animationView: LottieAnimationView? = null
 
         init {
             imgUrgentRequest = itemView.findViewById(R.id.imgUrgentRequest) as ImageView
@@ -115,6 +119,7 @@ class UrgentRequestAdapter (internal var context: Context, private var urgentReq
             btnReject = itemView.findViewById(R.id.btnReject) as Button
             btnComplete = itemView.findViewById(R.id.btnComplete) as Button
             cardUrgentRequest = itemView.findViewById(R.id.cardUrgentRequest) as MaterialCardView
+            animationView = itemView.findViewById(R.id.animationView) as LottieAnimationView
 
         }
     }
