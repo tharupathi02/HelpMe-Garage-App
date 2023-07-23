@@ -11,6 +11,7 @@ object Common {
     const val BILL_REF = "Bills"
     const val STORAGE_REF = "billImages/"
     var currentUser: UserModel? = null
+    val BOOKING_REF: String = "Bookings"
 
     // Create a array list of vehicle types
     var vehicleTypes = arrayListOf<String>("Bike", "Three Wheel", "Car", "Truck", "Bus", "Van", "SUV")
