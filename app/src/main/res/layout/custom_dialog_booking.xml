@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:text="Booking Confirmation"
+        android:textColor="@color/main_color"
+        android:textSize="20sp"
+        android:fontFamily="@font/poppins_semibold"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Confirm Note Here"
+        app:counterEnabled="true"
+        app:counterMaxLength="50"
+        android:layout_margin="20dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
+            android:inputType="textMultiLine"
+            android:maxLines="4"
+            android:maxLength="50"
+            android:lines="4"
+            android:gravity="start"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>
