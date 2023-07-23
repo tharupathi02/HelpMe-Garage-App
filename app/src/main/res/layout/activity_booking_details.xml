@@ -380,8 +380,20 @@
                         android:backgroundTint="@color/red"
                         android:layout_weight="1"/>
 
-                </LinearLayout>
+                    <Button
+                        android:id="@+id/btnComplete"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:text="Complete Work"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@color/main_color"
+                        android:visibility="gone"
+                        android:layout_weight="1"/>
 
+                </LinearLayout>
 
             </LinearLayout>
 
