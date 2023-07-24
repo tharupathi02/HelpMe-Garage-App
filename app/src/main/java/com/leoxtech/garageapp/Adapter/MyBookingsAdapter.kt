@@ -32,6 +32,7 @@ class MyBookingsAdapter (internal var context: Context, private var bookingList:
         holder.txtBookingRequestTitle!!.text = bookingList[position].issueTitle
         holder.txtBookingRequestDescription!!.text = bookingList[position].issueDescription
         holder.txtBookingRequest!!.text = bookingList[position].bookingStatus
+        holder.txtBookingRequestDateTime!!.text = "${bookingList[position].bookingDate} at ${bookingList[position].bookingTime}"
         Glide.with(context).load(bookingList[position].imageList!![0]).into(holder.imgBookingRequest!!)
 
         holder.cardBookingRequest!!.setOnClickListener {
@@ -46,6 +47,7 @@ class MyBookingsAdapter (internal var context: Context, private var bookingList:
         var txtBookingRequestTitle: TextView? = null
         var txtBookingRequestDescription: TextView? = null
         var txtBookingRequest: TextView? = null
+        var txtBookingRequestDateTime: TextView? = null
         var cardBookingRequest: MaterialCardView? = null
 
         init {
@@ -53,6 +55,7 @@ class MyBookingsAdapter (internal var context: Context, private var bookingList:
             txtBookingRequestTitle = itemView.findViewById(R.id.txtBookingRequestTitle) as TextView
             txtBookingRequestDescription = itemView.findViewById(R.id.txtBookingRequestDescription) as TextView
             txtBookingRequest = itemView.findViewById(R.id.txtBookingRequest) as TextView
+            txtBookingRequestDateTime = itemView.findViewById(R.id.txtBookingRequestDateTime) as TextView
             cardBookingRequest = itemView.findViewById(R.id.cardBookingRequest) as MaterialCardView
         }
     }

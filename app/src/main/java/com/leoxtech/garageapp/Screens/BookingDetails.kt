@@ -1,6 +1,7 @@
 package com.leoxtech.garageapp.Screens
 
 import android.app.AlertDialog
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -34,6 +35,7 @@ class BookingDetails : AppCompatActivity() {
 
     val bookingRequestImages = ArrayList<String>()
     private var bookingId: String? = null
+    private var customerId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +65,17 @@ class BookingDetails : AppCompatActivity() {
         binding.btnReject.setOnClickListener {
             rejectBooking()
 
+        }
+
+        binding.btnComplete.setOnClickListener {
+            startActivity(Intent(this, BookingComplete::class.java)
+                .putExtra("key", bookingId)
+                .putExtra("garageName", Common.currentUser!!.companyName)
+                .putExtra("customerName", binding.txtCustomerName.text.toString())
+                .putExtra("vehicleModel", binding.txtVehicleModel.text.toString())
+                .putExtra("vehicleNumber", binding.txtVehicleNumber.text.toString())
+                .putExtra("customerId", customerId)
+            )
         }
     }
 
@@ -199,8 +212,20 @@ class BookingDetails : AppCompatActivity() {
                             if (bookingSnapshot.child("bookingStatus").value.toString() == "Rejected" || bookingSnapshot.child("bookingStatus").value.toString() == "Accepted") {
                                 binding.btnAccept.visibility = View.GONE
                                 binding.btnReject.visibility = View.GONE
+                                binding.btnComplete.visibility = View.VISIBLE
+                            } else if (bookingSnapshot.child("bookingStatus").value.toString() == "Completed") {
+                                binding.btnAccept.visibility = View.GONE
+                                binding.btnReject.visibility = View.GONE
+                                binding.btnComplete.visibility = View.GONE
                             }
 
+                            if (bookingSnapshot.child("garageReview").child("0").child("ratingValue").value.toString().isNotEmpty()) {
+                                binding.layoutCustomerReview.visibility = View.VISIBLE
+                                binding.txtCustomerReviewValue.text = bookingSnapshot.child("garageReview").child("0").child("ratingValue").value.toString()
+                                binding.ratingBar.rating = bookingSnapshot.child("garageReview").child("0").child("ratingValue").value.toString().toFloat()
+                            }
+
+                            customerId = bookingSnapshot.child("customerId").value.toString()
                             dialog.dismiss()
                             getCustomerDetails(bookingSnapshot.child("customerId").value.toString())
                         }

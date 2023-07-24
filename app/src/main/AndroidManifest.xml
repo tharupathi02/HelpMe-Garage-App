@@ -19,6 +19,9 @@
         android:theme="@style/Theme.GarageApp"
         tools:targetApi="31">
         <activity
+            android:name=".Screens.BookingComplete"
+            android:exported="false" />
+        <activity
             android:name=".Screens.BookingDetails"
             android:exported="false" />
         <activity
