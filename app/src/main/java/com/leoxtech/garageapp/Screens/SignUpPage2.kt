@@ -5,11 +5,13 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.location.Geocoder
 import android.location.Location
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
 import android.view.View
 import android.widget.Toast
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -20,8 +22,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import com.leoxtech.customerapp.Model.UserModel
 import com.leoxtech.garageapp.Common.Common
+import com.leoxtech.garageapp.Model.Review
 import com.leoxtech.garageapp.R
 import com.leoxtech.garageapp.databinding.ActivitySignUpPage2Binding
 import java.io.IOException
@@ -44,6 +48,7 @@ class SignUpPage2 : AppCompatActivity() {
     private var longitude: Double = 0.0
 
     private var uID = "";
+    private var selectedImageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,6 +101,10 @@ class SignUpPage2 : AppCompatActivity() {
             signUpForm()
         }
 
+        binding.btnChooseImage.setOnClickListener {
+            pickImage()
+        }
+
         binding.btnSelectGarageLocation.setOnClickListener {
             dialog.show()
             fusedLocationProviderClient!!.lastLocation
@@ -143,6 +152,10 @@ class SignUpPage2 : AppCompatActivity() {
             binding.chipGroupVehicleType.addView(chip)
         }
 
+    }
+
+    private fun pickImage() {
+        ImagePicker.with(this).crop().compress(1024).maxResultSize(1080, 1080).start()
     }
 
     private fun getAddressFromLatLng(latitude: Double, longitude: Double): Any {
@@ -204,31 +217,86 @@ class SignUpPage2 : AppCompatActivity() {
         else {
             dialog.show()
             val userModel = UserModel()
-            userModel.uid = uID
-            userModel.name = binding.txtFirstName.editText?.text.toString() + " " + binding.txtLastName.editText?.text.toString()
-            userModel.email = binding.txtEmail.editText?.text.toString()
-            userModel.companyName = binding.txtCompanyName.editText?.text.toString()
-            userModel.description = binding.txtDescription.editText?.text.toString()
-            userModel.registrationNumber = binding.txtRegistrationNumber.editText?.text.toString()
-            userModel.address = binding.txtAddress.editText?.text.toString()
-            userModel.phone = binding.txtContactNumber.editText?.text.toString()
-            userModel.idNumber = binding.txtIDNumber.editText?.text.toString()
-            userModel.photoURL = mAuth.currentUser?.photoUrl.toString()
-            userModel.latitude = latitude
-            userModel.longitude = longitude
-            userModel.workingHours = binding.txtWorkingHours.editText?.text.toString()
-            userModel.workingVehicleTypes = Common.selectedVehicleTypes.toString().replace("[", "").replace("]", "")
 
-            userRef.child(uID).setValue(userModel).addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    Snackbar.make(binding.root, "Congratulation! Registration Completed...", Snackbar.LENGTH_SHORT).show()
-                    Common.currentUser = userModel
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    finish()
-                    dialog.dismiss()
-                } else {
-                    Snackbar.make(binding.root, "Registration Failed... ${task.exception?.message}", Snackbar.LENGTH_SHORT).show()
-                    dialog.dismiss()
+            val review = Review()
+            review.ratingValue = 0.0f
+            review.ratingCount = 0
+            review.time = System.currentTimeMillis().toString()
+
+            if (selectedImageUri != null) {
+                val storageRef = FirebaseStorage.getInstance().reference.child(Common.STORAGE_REF + uID + "-" + System.currentTimeMillis() + ".jpg")
+                storageRef.putFile(selectedImageUri!!).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        storageRef.downloadUrl.addOnSuccessListener { uri ->
+                            userModel.uid = uID
+                            userModel.name = binding.txtFirstName.editText?.text.toString() + " " + binding.txtLastName.editText?.text.toString()
+                            userModel.email = binding.txtEmail.editText?.text.toString()
+                            userModel.companyName = binding.txtCompanyName.editText?.text.toString()
+                            userModel.description = binding.txtDescription.editText?.text.toString()
+                            userModel.registrationNumber = binding.txtRegistrationNumber.editText?.text.toString()
+                            userModel.address = binding.txtAddress.editText?.text.toString()
+                            userModel.phone = binding.txtContactNumber.editText?.text.toString()
+                            userModel.idNumber = binding.txtIDNumber.editText?.text.toString()
+                            userModel.photoURL = uri.toString()
+                            userModel.latitude = latitude
+                            userModel.longitude = longitude
+                            userModel.workingHours = binding.txtWorkingHours.editText?.text.toString()
+                            userModel.workingVehicleTypes = Common.selectedVehicleTypes.toString().replace("[", "").replace("]", "")
+
+                            userRef.child(uID).setValue(userModel).addOnCompleteListener(this) { task ->
+                                if (task.isSuccessful) {
+                                    FirebaseDatabase.getInstance().getReference(Common.GARAGE_REF).child(uID)
+                                        .child("garageReview").child("0").setValue(review)
+                                        .addOnCompleteListener {
+                                            if (it.isSuccessful) {
+                                                Snackbar.make(binding.root, "Congratulation! Registration Completed...", Snackbar.LENGTH_SHORT).show()
+                                                Common.currentUser = userModel
+                                                startActivity(Intent(this, HomeActivity::class.java))
+                                                finish()
+                                                dialog.dismiss()
+                                            }
+                                        }
+                                } else {
+                                    Snackbar.make(binding.root, "Registration Failed... ${task.exception?.message}", Snackbar.LENGTH_SHORT).show()
+                                    dialog.dismiss()
+                                }
+                            }
+                        }
+                    } else {
+                        userModel.uid = uID
+                        userModel.name = binding.txtFirstName.editText?.text.toString() + " " + binding.txtLastName.editText?.text.toString()
+                        userModel.email = binding.txtEmail.editText?.text.toString()
+                        userModel.companyName = binding.txtCompanyName.editText?.text.toString()
+                        userModel.description = binding.txtDescription.editText?.text.toString()
+                        userModel.registrationNumber = binding.txtRegistrationNumber.editText?.text.toString()
+                        userModel.address = binding.txtAddress.editText?.text.toString()
+                        userModel.phone = binding.txtContactNumber.editText?.text.toString()
+                        userModel.idNumber = binding.txtIDNumber.editText?.text.toString()
+                        userModel.photoURL = mAuth.currentUser?.photoUrl.toString()
+                        userModel.latitude = latitude
+                        userModel.longitude = longitude
+                        userModel.workingHours = binding.txtWorkingHours.editText?.text.toString()
+                        userModel.workingVehicleTypes = Common.selectedVehicleTypes.toString().replace("[", "").replace("]", "")
+
+                        userRef.child(uID).setValue(userModel).addOnCompleteListener(this) { task ->
+                            if (task.isSuccessful) {
+                                FirebaseDatabase.getInstance().getReference(Common.GARAGE_REF).child(uID)
+                                    .child("garageReview").child("0").setValue(review)
+                                    .addOnCompleteListener {
+                                        if (it.isSuccessful) {
+                                            Snackbar.make(binding.root, "Congratulation! Registration Completed...", Snackbar.LENGTH_SHORT).show()
+                                            Common.currentUser = userModel
+                                            startActivity(Intent(this, HomeActivity::class.java))
+                                            finish()
+                                            dialog.dismiss()
+                                        }
+                                    }
+                            } else {
+                                Snackbar.make(binding.root, "Registration Failed... ${task.exception?.message}", Snackbar.LENGTH_SHORT).show()
+                                dialog.dismiss()
+                            }
+                        }
+                    }
                 }
             }
 
@@ -249,6 +317,25 @@ class SignUpPage2 : AppCompatActivity() {
         }.create().also {
             dialog = it
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            if (data!!.data != null) {
+                selectedImageUri = data.data
+                binding.imgProfile.setImageURI(selectedImageUri)
+
+            } else if (resultCode == ImagePicker.RESULT_ERROR) {
+                Snackbar.make(binding.root, "Error: Image draw too large. Please select another image. and try again.", Snackbar.LENGTH_SHORT).setAction("Try Again") {
+                    pickImage()
+                }.show()
+            } else {
+                Snackbar.make(binding.root, "Error: Image draw too large. Please select another image. and try again.", Snackbar.LENGTH_SHORT).setAction("Try Again") {
+                    pickImage()
+                }.show()
+            }
         }
     }
 

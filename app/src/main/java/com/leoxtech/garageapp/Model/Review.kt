@@ -6,4 +6,5 @@ class Review {
     var ratingValue: Float? = null
     var ratingCount: Int? = null
     var comment: String? = null
+    var time: String? = null
 }

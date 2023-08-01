@@ -219,10 +219,14 @@ class BookingDetails : AppCompatActivity() {
                                 binding.btnComplete.visibility = View.GONE
                             }
 
-                            if (bookingSnapshot.child("garageReview").child("0").child("ratingValue").value.toString().isNotEmpty()) {
-                                binding.layoutCustomerReview.visibility = View.VISIBLE
-                                binding.txtCustomerReviewValue.text = bookingSnapshot.child("garageReview").child("0").child("ratingValue").value.toString()
-                                binding.ratingBar.rating = bookingSnapshot.child("garageReview").child("0").child("ratingValue").value.toString().toFloat()
+                            try {
+                                if (bookingSnapshot.child("garageReview").child("0").child("ratingValue").value.toString().isNotEmpty()) {
+                                    binding.layoutCustomerReview.visibility = View.VISIBLE
+                                    binding.txtCustomerReviewValue.text = bookingSnapshot.child("garageReview").child("0").child("ratingValue").value.toString()
+                                    binding.ratingBar.rating = bookingSnapshot.child("garageReview").child("0").child("ratingValue").value.toString().toFloat()
+                                }
+                            } catch (e: Exception) {
+                                binding.layoutCustomerReview.visibility = View.GONE
                             }
 
                             customerId = bookingSnapshot.child("customerId").value.toString()
