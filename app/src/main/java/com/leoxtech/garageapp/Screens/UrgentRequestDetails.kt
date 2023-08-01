@@ -124,38 +124,43 @@ class UrgentRequestDetails : AppCompatActivity() {
                             val latLngCustomer = LatLng(urgentSnapshot.child("latitude").value.toString().toDouble(), urgentSnapshot.child("longitude").value.toString().toDouble())
 
                             val locationResult = LocationServices.getFusedLocationProviderClient(this@UrgentRequestDetails).lastLocation
-                            val mapFragment = supportFragmentManager.findFragmentById(R.id.mapView) as SupportMapFragment
-                            mapFragment.getMapAsync { googleMap ->
-                                locationResult.addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-                                        val lastKnownLocation = task.result
-                                        if (lastKnownLocation != null) {
-                                            val latLng = LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude)
-                                            googleMap.isMyLocationEnabled = true
-                                            googleMap.uiSettings.isMyLocationButtonEnabled = true
-                                            googleMap.uiSettings.isZoomControlsEnabled = true
-                                            googleMap.uiSettings.isZoomGesturesEnabled = true
-                                            googleMap.uiSettings.isScrollGesturesEnabled = true
-                                            googleMap.uiSettings.isTiltGesturesEnabled = true
-                                            googleMap.uiSettings.isRotateGesturesEnabled = true
-                                            googleMap.uiSettings.isCompassEnabled = true
-                                            googleMap.uiSettings.isMapToolbarEnabled = true
-                                            googleMap.uiSettings.isRotateGesturesEnabled = true
-                                            googleMap.uiSettings.isTiltGesturesEnabled = true
-                                            googleMap.isIndoorEnabled = true
-                                            googleMap.projection.visibleRegion.latLngBounds
-                                            googleMap.isBuildingsEnabled = true
-                                            googleMap.isTrafficEnabled = true
-                                            googleMap.isMyLocationEnabled = true
 
-                                            googleMap.addMarker(MarkerOptions().position(latLngCustomer).title(urgentSnapshot.child("customerVehicle").value.toString()).icon(BitmapDescriptorFactory.fromResource(R.drawable.location_3d)))
-                                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngCustomer, 13f))
+                            try {
+                                val mapFragment = supportFragmentManager.findFragmentById(R.id.mapView) as SupportMapFragment
+                                mapFragment.getMapAsync { googleMap ->
+                                    locationResult.addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            val lastKnownLocation = task.result
+                                            if (lastKnownLocation != null) {
+                                                val latLng = LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude)
+                                                googleMap.isMyLocationEnabled = true
+                                                googleMap.uiSettings.isMyLocationButtonEnabled = true
+                                                googleMap.uiSettings.isZoomControlsEnabled = true
+                                                googleMap.uiSettings.isZoomGesturesEnabled = true
+                                                googleMap.uiSettings.isScrollGesturesEnabled = true
+                                                googleMap.uiSettings.isTiltGesturesEnabled = true
+                                                googleMap.uiSettings.isRotateGesturesEnabled = true
+                                                googleMap.uiSettings.isCompassEnabled = true
+                                                googleMap.uiSettings.isMapToolbarEnabled = true
+                                                googleMap.uiSettings.isRotateGesturesEnabled = true
+                                                googleMap.uiSettings.isTiltGesturesEnabled = true
+                                                googleMap.isIndoorEnabled = true
+                                                googleMap.projection.visibleRegion.latLngBounds
+                                                googleMap.isBuildingsEnabled = true
+                                                googleMap.isTrafficEnabled = true
+                                                googleMap.isMyLocationEnabled = true
 
-                                            dialog.dismiss()
+                                                googleMap.addMarker(MarkerOptions().position(latLngCustomer).title(urgentSnapshot.child("customerVehicle").value.toString()).icon(BitmapDescriptorFactory.fromResource(R.drawable.location_3d)))
+                                                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngCustomer, 13f))
+
+                                                dialog.dismiss()
+                                            }
                                         }
                                     }
+                                    dialog.dismiss()
                                 }
-                                dialog.dismiss()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
                             }
 
                             if (urgentSnapshot.child("status").value.toString() == "Accepted") {

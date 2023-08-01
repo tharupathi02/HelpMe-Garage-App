@@ -1,5 +1,7 @@
 package com.leoxtech.customerapp.Model
 
+import com.leoxtech.garageapp.Model.Review
+
 class UserModel {
     var uid: String? = null
     var name: String? = null
@@ -15,6 +17,8 @@ class UserModel {
     var longitude: Double? = null
     var workingVehicleTypes: String? = null
     var workingHours: String? = null
+
+    var garageReview: List<Review>? = ArrayList<Review>()
 
     constructor(){}
 }

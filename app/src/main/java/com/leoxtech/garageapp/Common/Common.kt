@@ -5,6 +5,8 @@ import com.leoxtech.customerapp.Model.UserModel
 import java.text.SimpleDateFormat
 
 object Common {
+
+    const val GARAGE_REF: String = "Garage Users"
     const val USER_REFERENCE = "Users"
     const val GARAGE_USER_REFERENCE = "Garage Users"
     const val REQUEST_REF = "Requests"

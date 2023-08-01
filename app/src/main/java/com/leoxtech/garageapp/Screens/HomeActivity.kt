@@ -145,7 +145,7 @@ class HomeActivity : AppCompatActivity() {
     private fun profileInfo() {
         dialog.show()
         if (Common.currentUser != null) {
-            binding.txtCustomerName.text = Common.currentUser!!.name
+            binding.txtCustomerName.text = Common.currentUser!!.companyName
             if (Common.currentUser!!.photoURL != null) {
                 Glide.with(this).load(Common.currentUser!!.photoURL).into(binding.imgAvatar)
                 dialog.dismiss()
